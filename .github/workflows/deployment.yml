@@ -27,3 +27,29 @@ jobs:
         with:
           push: true
           tags: yaqoobaslam/template-render:${{ github.run_number }}
+
+  build:
+    strategy:
+      matrix:
+        python-version: [3.8]
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Switch to Current Branch
+        run: git checkout ${{ env.BRANCH }}
+              
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install pytest
+          pip install -r requirements.txt
+          
+      - name: Run unit tests
+        run: pytest 
